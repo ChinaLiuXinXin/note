@@ -210,3 +210,17 @@ password=hsp
 
 ​	直接看官网比较好，重点记住where，where在某些特殊的情况下能够发挥奇用。
 
+​	**插件**
+
+​	框架一般都会提供扩展功能的接口，mybatis可以通过插件拓展功能，例如分页。
+
+```xml
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+            <property name="param1" value="value1"/>
+        </plugin>
+    </plugins>
+```
+
