@@ -206,10 +206,74 @@
 
 ​	2，【-】表示连续的区间
 
+​	可选参数
+
+​	1，【-e】：编辑任务
+
+​	2，【-l】：查看任务
+
+​	3，【-r】：移除任务
+
 **AT定时任务**
 
 ​	概念：前面的任务是无限次的任务，只要不被取消，当条件满足便可以无限次触发，但有时候我们只需要任务执行一遍，这时候就需要用到AT定时任务。
 
 ​	作业队列： 所有的定时任务都会存储在这里，atd守护进程默认会每分钟扫描一次作业队列，符合条件的会直接触发执行，执行过后任务会被直接移除，不会再次执行。
 
+​	![image-20221031102956157](C:\Users\LiuXinXin\AppData\Roaming\Typora\typora-user-images\image-20221031102956157.png) 	参数	![image-20221031103535371](C:\Users\LiuXinXin\AppData\Roaming\Typora\typora-user-images\image-20221031103535371.png)
+
+​	写入任务时backspace会被锁定，按住ctrl键解锁
+
+
+
+​	**磁盘管理**：Linux中对磁盘的管理采用采用挂载的方式，（物理单元到逻辑单元的映射）采用mvr磁盘类型的Linux系统最多可以划分四个主磁盘区域。
+
+​	划分步骤
+
+​	1，分区：fdisk	/dev/磁盘名
+
+​	2，格式化磁盘：mkfs	-t	文件系统	/dev/磁盘分区号
+
+​	3，挂载mount	/dev/磁盘分区号	目录
+
+​	！通过命令行挂载的方式，每一次重启后都会失效，需要手动开启。可以编辑文件：/etc/fstab
+
+​	查看磁盘使用情况的命令：df	-h
+
+​	查看磁盘占用情况的命令：du	-h,s,a,c	--max-depth = num(子节点深度)
+
+​	查看所有系统磁盘详细信息
+
 ​	
+
+​	**网络配置**
+
+​	1，设置静态ip
+
+​	/etc/sysconfig/network-script/网络连接名，可通过ifconfig查看，若为最小化安装，则需要先安装net-tools才能使用该命令
+
+​	重启网络命令：service	network	restart
+
+![image-20221101111559118](C:\Users\LiuXinXin\AppData\Roaming\Typora\typora-user-images\image-20221101111559118.png)
+
+​	**进程管理**
+
+​	1，查看所有进程	ps -aux	
+
+![image-20221101113749749](C:\Users\LiuXinXin\AppData\Roaming\Typora\typora-user-images\image-20221101113749749.png)
+
+​	pid表示进程名
+
+​	command表示进程名，（执行该进程的指令）
+
+​	stat表示进程状态,s表示休眠，z表示僵死进程
+
+​	start表示进程启动的时间点
+
+​	time表示进程运行的时长
+
+​	2，显示进程的父子关系	ps	-ef
+
+​	3，结束进程：kill	进程号；killall	进程名	
+
+​	4，进程树：pstree	-up【显示进程所属用户与进程号】
