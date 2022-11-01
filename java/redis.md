@@ -74,3 +74,21 @@
 ​		5，lrange	key	start	end
 
 ​		6，blpop和brpop 会等待一定时间再执行。
+
+​	**set**
+
+​		1，sadd
+
+​		2，sismenber
+
+​		3，srem
+
+​		4，sinter	sdiff	sunion	
+
+​		5， sinterstore	sdiffstore	sunionstore
+
+​		6，spop
+
+​	**sortedset**：可排序，查询速度快，元素不重复
+
+​		1，在set基础之上还需要并入一个参数score，其他就没什么了
