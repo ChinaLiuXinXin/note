@@ -92,3 +92,139 @@
 ​	**sortedset**：可排序，查询速度快，元素不重复
 
 ​		1，在set基础之上还需要并入一个参数score，其他就没什么了
+
+​	**jbdis**
+
+```xml
+<!--		jedis驱动-->
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>4.3.1</version>
+</dependency>
+```
+
+​	java配置信息
+
+```java
+Jedis jedis = new Jedis("8.134.32.226",6379);
+jedis.auth("123456");
+jedis.select(0);
+jedis.set("a","12");
+
+jedis.close();
+```
+
+​	连接池
+
+```java
+static {
+    JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+    //设置最大连接数
+    jedisPoolConfig.setMaxTotal(8);
+    //设置最大空闲数量
+    jedisPoolConfig.setMaxIdle(8);
+    //设置最小空闲连接 
+    jedisPoolConfig.setMinIdle(5);
+    //
+    //        jedisPoolConfig.setMaxWait();
+    jedisPool = new JedisPool(jedisPoolConfig,"8.134.32.226",6379,1000,"123456");
+}
+//将对象放回连接池
+public static void close(Jedis jedis){
+    if(jedis != null){
+        jedisPool.returnResource(jedis);
+    }
+}
+```
+
+​	spring整合redis
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+<!--		连接池依赖-->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-pool2</artifactId>
+</dependency>
+```
+
+```yam
+//spring boot配置	
+spring:
+  redis:
+    database: 0
+    host: 8.134.32.226
+    port: 6379
+    password: 123456
+    lettuce:
+      pool:
+        max-active: 8	//最大连接数
+        max-idle: 8	//最大空闲数
+        min-idle: 5	//最小空闲数量
+        max-wait: 100	//等待时间
+```
+
+**序列化**：将对象的状态存储到文件中
+
+**反序列化**：将文件形式的对象重新读取转化为原有形式
+
+```java
+@Test
+public void TestSerializable() throws IOException {
+    //        序列化
+    FileOutputStream fileOutputStream = new FileOutputStream("D:\\test\\hello.txt");
+    ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+    objectOutputStream.writeObject(new User("jack",100));
+    objectOutputStream.flush();
+    objectOutputStream.close();
+}
+
+@Test
+public void TestRe() throws ClassNotFoundException, IOException {
+    //        反序列化
+    ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("D:\\test\\hello.txt"));
+    User user = (User) objectInputStream.readObject();
+    System.out.println(user.getName());
+    System.out.println(user.getAge());
+}
+```
+
+在redis中存在序列化的需求，例如当我们需要将对象存储到redis数据库中时，此时就存在序列化方式的问题。
+
+​	1，手动配置序列化方式，就是为存入redis中的数据的值配置序列化方式，例如说key，value，哈希key，哈希value，，，
+
+```java
+    @Bean
+    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
+//
+        RedisTemplate<String, Object> stringObjectRedisTemplate = new RedisTemplate<>();
+//        连接工厂
+        stringObjectRedisTemplate.setConnectionFactory(redisConnectionFactory);
+//        序列化工具
+        GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+//        key的序列化
+        stringObjectRedisTemplate.setKeySerializer(RedisSerializer.string());
+        stringObjectRedisTemplate.setValueSerializer(jsonRedisSerializer);
+        return stringObjectRedisTemplate;
+    }
+```
+
+​	2，使用spring默认的配置方式，自行序列化，自行确定以什么方式存入redis中
+
+```java
+	@Test
+	void getJack(){
+//		手动序列化注入redis数据库
+		ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+		String s = stringStringValueOperations.get("user:jack");
+		Gson gson = new Gson();
+		User user = gson.fromJson(s, User.class);
+		System.out.println(user.getName());
+		System.out.println(user.getAge());
+	}
+```
+

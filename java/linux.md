@@ -277,3 +277,31 @@
 ​	3，结束进程：kill	进程号；killall	进程名	
 
 ​	4，进程树：pstree	-up【显示进程所属用户与进程号】
+
+​	**解压缩**
+
+​	1，gzip	gunzip
+
+​	2，zip	unzip
+
+​	3，tar
+
+​	**文件权限**
+
+​	1，查看：ls	-ahl
+
+​	2，权限组成部分，第一位表示文件类型，之后的字码三位一组，分别表示用户权限，同组其它用户权限，其他用户权限。
+
+![image-20221102111614990](C:\Users\LiuXinXin\AppData\Roaming\Typora\typora-user-images\image-20221102111614990.png)
+
+​	3，文件所有人修改：文件可以是属于用户，也可以是某个组的，chown，chgrp，可以选择参数-r表示递归
+
+​	4，文件权限修改：
+
+​		第一种方式	chmod	权限码	文件，r的数值为4，w为2，x为1,
+
+​		第二种方式	chmod	oug=wrx	文件	——这个例子表示将此文件的权限修改为所有人都可读可写可执行。
+
+​	**防火墙**
+
+​	1，端口放行：firewall-cmd --zone=public --add-port=80/tcp --permanent
