@@ -305,3 +305,14 @@
 ​	**防火墙**
 
 ​	1，端口放行：firewall-cmd --zone=public --add-port=80/tcp --permanent
+
+
+
+### 	ftp
+
+​	安装：yum install vsftpd
+
+​	放行端口：20，21
+
+
+
